@@ -4,8 +4,12 @@ export class Logger {
   formatMessage = (logger: (message: string) => void) => (message: string) =>
     logger(` ${message} `);
 
-  log = this.formatMessage((message: string) => {
-    console.log(message);
+  log = (message: string) => {
+    console.log(chalk.bgGray.white(message));
+  };
+
+  success = this.formatMessage((message: string) => {
+    console.log(chalk.bgGreen.bold.white(message));
   });
 
   error = this.formatMessage((message: string) => {

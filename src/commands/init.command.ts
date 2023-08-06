@@ -24,6 +24,7 @@ class InitCommand extends BaseCommand {
         type: "input",
         name: "rootFolder",
         message: "Introduce root folder:",
+        default: "src",
       },
     ];
 
@@ -34,7 +35,7 @@ class InitCommand extends BaseCommand {
     };
 
     this.fileManager.saveConfig(config);
-    this.logger.log("Configuration saved successfully");
+    this.logger.success("Configuration saved successfully");
   };
 }
 
