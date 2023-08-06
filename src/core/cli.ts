@@ -8,13 +8,19 @@ import { Logger } from "../services/logger.service";
 export class CLI extends Command {
   logger = new Logger();
 
+  register = (command: BaseCommand) =>
+    this.command(command.name)
+      .description(command.description)
+      .action(async (...args) => await command.execute(...args));
+
   init = async (args: string[]) => {
     const commandFiles = glob.sync("./src/commands/*.ts");
-    commandFiles.forEach(async (file) => {
+
+    for (const file of commandFiles) {
       const { default: CommandClass } = await import(resolve(file));
       const command = new CommandClass();
-      if (command instanceof BaseCommand) command.register(this);
-    });
+      this.register(command);
+    }
 
     return this.name(name)
       .version(version)
