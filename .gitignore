@@ -1,0 +1,35 @@
+# Ignore build output
+/dist
+/out
+/build
+
+# Ignore Node.js modules
+/node_modules
+
+# Ignore TypeScript build files
+*.tsbuildinfo
+
+# Ignore logs
+*.log
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+*.sublime-*
+
+# Ignore macOS-specific files
+.DS_Store
+
+# Ignore Windows-specific files
+Thumbs.db
+
+# Ignore npm, yarn, and pnpm lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore CLI-generated files (change 'cli-name' to the name of your CLI)
+cli-name-debug.log
+cli-name-error.log
+
+# Add other project-specific files to ignore if needed

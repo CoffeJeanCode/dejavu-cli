@@ -1,0 +1,24 @@
+{
+  "name": "dejavu",
+  "version": "1.0.0",
+  "description": "A powerful CLI tool for web libraries like React, simplifying component creation and enabling seamless development.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "4.1.1",
+    "commander": "11.0.0",
+    "glob": "10.3.3",
+    "inquirer": "9.2.10"
+  },
+  "devDependencies": {
+    "@types/inquirer": "9.0.3",
+    "@types/node": "20.4.8",
+    "ts-node": "10.9.1",
+    "typescript": "5.1.6"
+  }
+}
