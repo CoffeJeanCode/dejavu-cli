@@ -33,3 +33,4 @@ cli-name-debug.log
 cli-name-error.log
 
 # Add other project-specific files to ignore if needed
+./dejavu.json
