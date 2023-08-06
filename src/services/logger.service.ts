@@ -1,8 +1,10 @@
 import chalk from "chalk";
 
 export class Logger {
-  formatMessage = (logger: (message: string) => void) => (message: string) =>
-    logger(` ${message} `);
+  formatMessage =
+    (logger: (...message: string[]) => void) =>
+    (...message: string[]) =>
+      logger(` ${message.join(" ")} `);
 
   log = (message: string) => {
     console.log(chalk.bgGray.white(message));
