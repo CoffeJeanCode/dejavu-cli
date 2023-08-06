@@ -1,3 +1,4 @@
+import { Command } from "commander";
 import inquirer, { QuestionCollection } from "inquirer";
 import { BaseCommand } from "../models/base-command";
 import { Config } from "../models/config.model";
@@ -5,8 +6,6 @@ import { Config } from "../models/config.model";
 class InitCommand extends BaseCommand {
   constructor() {
     super();
-    this.name = "init";
-    this.description = "Configure the CLI with dejavu.json";
   }
 
   execute = async () => {
@@ -37,6 +36,9 @@ class InitCommand extends BaseCommand {
     this.fileManager.saveConfig(config);
     this.logger.success("Configuration saved successfully");
   };
+
+  register = (program: Command) =>
+    program.command("init").description("Configure file dejavu.json");
 }
 
 export default InitCommand;

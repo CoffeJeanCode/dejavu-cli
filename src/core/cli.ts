@@ -2,16 +2,10 @@ import { Command } from "commander";
 import { glob } from "glob";
 import { resolve } from "path";
 import { description, name, version } from "../../package.json";
-import { BaseCommand } from "../models/base-command";
 import { Logger } from "../services/logger.service";
 
 export class CLI extends Command {
   logger = new Logger();
-
-  register = (command: BaseCommand) =>
-    this.command(command.name)
-      .description(command.description)
-      .action(async (...args) => await command.execute(...args));
 
   init = async (args: string[]) => {
     const commandFiles = glob.sync("./src/commands/*.ts");
@@ -19,7 +13,14 @@ export class CLI extends Command {
     for (const file of commandFiles) {
       const { default: CommandClass } = await import(resolve(file));
       const command = new CommandClass();
-      this.register(command);
+      command
+        .register(this)
+        .action(
+          async (...args: any[]) =>
+            await command
+              .execute(args)
+              .catch((err: Error) => console.error(err))
+        );
     }
 
     return this.name(name)
