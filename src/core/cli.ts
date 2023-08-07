@@ -1,18 +1,14 @@
 import { Command } from "commander";
-import { glob } from "glob";
-import { resolve } from "path";
 import { description, name, version } from "../../package.json";
+import { commands } from "../commands";
 import { Logger } from "../services/logger.service";
 
 export class CLI extends Command {
   logger = new Logger();
 
   init = async (args: string[]) => {
-    const commandFiles = glob.sync("./src/commands/*.ts");
-
-    for (const file of commandFiles) {
-      const { default: CommandClass } = await import(resolve(file));
-      const command = new CommandClass();
+    for (const Command of commands) {
+      const command = new Command();
       command
         .register(this)
         .action(
