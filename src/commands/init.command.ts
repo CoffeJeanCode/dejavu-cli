@@ -15,13 +15,22 @@ class InitCommand extends BaseCommand {
         name: "language",
         message: "Introduce app language:",
         choices: [
-          { name: "Javascript", value: "javascript" },
-          { name: "Typsecript", value: "typescript" },
+          { name: "Javascript", value: "js" },
+          { name: "Typsecript", value: "ts" },
+        ],
+      },
+      {
+        type: "list",
+        name: "typeComponent",
+        message: "Introduce type component:",
+        choices: [
+          { name: "Barrel", value: "barrel" },
+          { name: "File", value: "file" },
         ],
       },
       {
         type: "input",
-        name: "rootFolder",
+        name: "mainFolder",
         message: "Introduce root folder:",
         default: "src",
       },
@@ -30,7 +39,8 @@ class InitCommand extends BaseCommand {
     const answers = await inquirer.prompt(questions);
     const config: Config = {
       language: answers.language,
-      rootFolder: answers.rootFolder,
+      mainFolder: answers.mainFolder,
+      typeComponent: answers.typeComponent,
     };
 
     this.fileManager.saveConfig(config);
