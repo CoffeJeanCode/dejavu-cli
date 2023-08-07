@@ -1,4 +1,15 @@
+export enum TypeComponent {
+  file = "file",
+  barrel = "barrel",
+}
+
+export enum Language {
+  javascript = "js",
+  typescript = "ts",
+}
+
 export interface Config {
-  language: string;
-  rootFolder: string;
+  language: Language;
+  mainFolder: string;
+  typeComponent: TypeComponent;
 }
