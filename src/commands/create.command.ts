@@ -1,29 +1,29 @@
 import { Command } from "commander";
 import { BaseCommand } from "../models/base-command";
+import { ComponentTemplate } from "../templates/component.template";
 import { match } from "../utils/pattern-match.util";
 
 class CreateCommand extends BaseCommand {
+  private componentTemplate: ComponentTemplate;
+
   constructor() {
     super();
+    this.componentTemplate = new ComponentTemplate();
   }
 
   createComponent = async (names: string[]) => {
-    const config = this.fileManager.getConfig();
-    const mainFolder = config?.rootFolder || "src";
+    const { mainFolder, typeComponent, language } = this.config;
     const componentFolder = `${mainFolder}/components`;
 
     try {
-      const folderExists = await this.fileManager.exists(componentFolder);
-      if (!folderExists) {
-        await this.fileManager.createDirectory(componentFolder);
-      }
-
+      this.fileManager.createDirectoryIfNotExists(componentFolder);
       for (const name of names) {
-        const componentPath = `${componentFolder}/${name}.js`;
-        const componentContent = `const ${name} = () => {\n  return <div>${name} component</div>;\n};\n\nexport default ${name};\n`;
-
-        await this.fileManager.writeFile(componentPath, componentContent);
-        this.logger.success(`Component ${name} created at ${componentPath}`);
+        await this.componentTemplate.createComponent(
+          name,
+          typeComponent,
+          language,
+          mainFolder
+        );
       }
     } catch (error) {
       this.logger.error("Error creating components:", String(error));
@@ -41,11 +41,16 @@ class CreateCommand extends BaseCommand {
   };
 
   execute = async ([type, names]: any) => {
+    if (names.length === 0) {
+      this.logger.warn("Put names to files");
+      process.exit(0);
+    }
+
     const result = match<string, void>(
       type,
-      ["component", this.createComponent],
-      ["hook", this.createHook],
-      ["service", this.createService]
+      [["component", "comp", "c"], this.createComponent],
+      [["hook", "hk"], this.createHook],
+      [["service", "svc"], this.createService]
     )(...names);
 
     if (result === null) this.logger.error("Invalid type");
