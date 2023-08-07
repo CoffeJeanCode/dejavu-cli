@@ -1,10 +1,10 @@
-type Pattern<T, R> = [T, (value: any[]) => R];
+type Pattern<T, R> = [T[], (value: any[]) => R];
 
 export const match =
   <T, R>(value: T, ...patterns: Pattern<T, R>[]) =>
   (...args: any[]): R | null => {
-    for (const [patternValue, fn] of patterns) {
-      if (value === patternValue) {
+    for (const [patternValues, fn] of patterns) {
+      if (patternValues.includes(value)) {
         return fn(args);
       }
     }
