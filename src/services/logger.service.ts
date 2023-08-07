@@ -14,6 +14,10 @@ export class Logger {
     console.log(chalk.bgGreen.bold.white(message));
   });
 
+  warn = this.formatMessage((message: string) => {
+    console.log(chalk.bgYellow.bold.white(message));
+  });
+
   error = this.formatMessage((message: string) => {
     console.error(chalk.bgRed.bold.white(message));
   });
