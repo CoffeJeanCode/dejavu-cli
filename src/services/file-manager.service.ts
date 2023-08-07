@@ -49,11 +49,17 @@ export class FileManager {
     });
   }
 
-  createDirectory(path: string): Promise<void> {
+  createDirectoryIfNotExists(path: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      fs.mkdir(path, { recursive: true }, (error) => {
-        if (error) {
-          reject(error);
+      this.exists(path).then((exists) => {
+        if (!exists) {
+          fs.mkdir(path, { recursive: true }, (error) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve();
+            }
+          });
         } else {
           resolve();
         }
