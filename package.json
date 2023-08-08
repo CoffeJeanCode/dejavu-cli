@@ -1,30 +1,39 @@
 {
   "name": "dejavu",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A powerful CLI tool for web libraries like React, simplifying component creation and enabling seamless development.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "bin": {
-    "vu": "./src/index.js",
-    "dejavu": "./src/index.js"
+    "dejavu": "dist/index.js"
   },
   "scripts": {
-    "build": "rimraf dist/ && tsc & ts-node scripts/build.ts",
+    "build": "rimraf dist/ && tsc && ts-node scripts/build.ts",
     "dev": "ts-node src/index.ts"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Jean Pierre Ortiz",
   "license": "ISC",
   "dependencies": {
-    "chalk": "4.1.1",
-    "commander": "11.0.0",
-    "inquirer": "8.2.0",
-    "rimraf": "5.0.1"
+    "chalk": "^4.1.1",
+    "commander": "^11.0.0",
+    "inquirer": "^8.2.0"
   },
   "devDependencies": {
-    "@types/inquirer": "8.2.0",
-    "@types/node": "20.4.8",
-    "esbuild": "0.18.19",
-    "ts-node": "10.9.1",
-    "typescript": "5.1.6"
-  }
+    "rimraf": "^5.0.1",
+    "@types/inquirer": "^8.2.0",
+    "@types/node": "^20.4.8",
+    "esbuild": "^0.18.19",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.4.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CoffeJeanCode/dejavu"
+  },
+  "bugs": {
+    "url": "https://github.com/CoffeJeanCode/dejavu/issues"
+  },
+  "homepage": "https://github.com/CoffeJeanCode/dejavu#readme"
 }
