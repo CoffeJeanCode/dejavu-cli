@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import { Argument, Command } from "commander";
 import { BaseCommand } from "../models/base-command";
 import { ComponentTemplate } from "../templates/component.template";
 import { match } from "../utils/pattern-match.util";
@@ -14,12 +14,18 @@ import { match } from "../utils/pattern-match.util";
  */
 class CreateCommand extends BaseCommand {
   private componentTemplate: ComponentTemplate;
+  private types = {
+    components: ["component", "comp", "c"],
+    hooks: ["hook", "hk"],
+    services: ["service", "svc"],
+  };
 
   constructor() {
     super();
     this.componentTemplate = new ComponentTemplate();
   }
 
+  getAllTypes = () => Object.values(this.types);
   /**
    * Creates components based on provided names.
    *
@@ -84,17 +90,20 @@ class CreateCommand extends BaseCommand {
    * @function execute
    * @param {any[]} [type, names] - The type of component to create and the names of the components.
    */
+
   execute = async ([type, names]: any) => {
     if (names.length === 0) {
       this.logger.warn("Put names to files");
       process.exit(0);
     }
 
+    const { components, hooks, services } = this.types;
+
     const result = match<string, void>(
       type,
-      [["component", "comp", "c"], this.createComponent],
-      [["hook", "hk"], this.createHook],
-      [["service", "svc"], this.createService]
+      [components, this.createComponent],
+      [hooks, this.createHook],
+      [services, this.createService]
     )(...names);
 
     if (result === null) this.logger.error("Invalid type");
@@ -109,10 +118,13 @@ class CreateCommand extends BaseCommand {
   register = (program: Command) =>
     program
       .command("create ")
-      .argument("[type]")
+      .argument(
+        "[type]",
+        `Type of file to create, could be: ${this.getAllTypes().map(types => types.join(" ")).join(" | ")}`
+      )
       .argument("[names...]")
       .aliases(["c"])
-      .description("Create components");
+      .description("Create components, hook, services...");
 }
 
 export default CreateCommand;
