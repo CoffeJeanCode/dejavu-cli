@@ -9,6 +9,27 @@ class InitCommand extends BaseCommand {
   }
 
   execute = async () => {
+    const existingConfig = this.fileManager.getConfig();
+
+    if (existingConfig) {
+      const overwriteQuestion: QuestionCollection = [
+        {
+          type: "confirm",
+          name: "overwrite",
+          message:
+            "A configuration already exists. Do you want to overwrite it?",
+          default: false,
+        },
+      ];
+
+      const overwriteAnswer = await inquirer.prompt(overwriteQuestion);
+
+      if (!overwriteAnswer.overwrite) {
+        this.logger.info("Configuration not overwritten. Exiting...");
+        return;
+      }
+    }
+
     const questions: QuestionCollection = [
       {
         type: "list",
@@ -44,6 +65,7 @@ class InitCommand extends BaseCommand {
     };
 
     this.fileManager.saveConfig(config);
+    this.fileManager.createDirectoryIfNotExists(config.mainFolder);
     this.logger.success("Configuration saved successfully");
   };
 
