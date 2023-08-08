@@ -61,7 +61,7 @@ export class Logger {
    * @param {string} message - The warning message to be logged.
    */
   warn = this.formatMessage((message: string) => {
-    console.log(chalk.bgYellow.bold.white(message));
+    console.log(chalk.bgYellow.bold.black(message));
   });
 
   /**
