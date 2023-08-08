@@ -10,6 +10,10 @@ export class Logger {
     console.log(chalk.bgGray.white(message));
   };
 
+  info = this.formatMessage((message: string) => {
+    console.log(chalk.bgBlue.bold.white(message));
+  });
+
   success = this.formatMessage((message: string) => {
     console.log(chalk.bgGreen.bold.white(message));
   });
