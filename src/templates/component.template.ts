@@ -26,7 +26,6 @@ export class ComponentTemplate {
 
   private createFile = async (componentPath: string, componentName: string) => {
     const componentContent = this.getTemplate(componentName);
-    console.log(componentPath);
     await this.fileManager.createFileIfNotExists(
       componentPath,
       componentContent
@@ -60,9 +59,18 @@ export class ComponentTemplate {
     const componentFolder = join(mainFolder, "components");
     const extension = language === Language.typescript ? "tsx" : "js";
     const componentName = `${formatedName}.${extension}`;
+    const componentPath =
+      typeComponent == TypeComponent.barrel
+        ? join(componentFolder, formatedName, componentName)
+        : join(componentFolder, componentName);
 
     try {
       await this.fileManager.createDirectoryIfNotExists(componentFolder);
+
+      if (await this.fileManager.exists(componentPath)) {
+        this.logger.info(`Component ${formatedName} already exists`);
+        return;
+      }
 
       match(
         typeComponent,
@@ -79,7 +87,6 @@ export class ComponentTemplate {
             const barrelName = `index.${extension}`;
             const barrelFolder = join(componentFolder, formatedName);
             const barrelPath = join(componentFolder, formatedName, barrelName);
-            const componentPath = join(barrelFolder, componentName);
 
             await this.createBarrel(barrelFolder, barrelPath, formatedName);
             await this.createFile(componentPath, formatedName);
