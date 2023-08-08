@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { BaseCommand } from "../models/base-command";
+import { Config } from "../models/config.model";
 
 class ConfigCommand extends BaseCommand {
   constructor() {
@@ -8,9 +9,10 @@ class ConfigCommand extends BaseCommand {
 
   execute = async () => {
     this.logger.info("Current CLI Configuration:");
-    this.logger.info(`Language: ${this.config.language}`);
-    this.logger.info(`Main Folder: ${this.config.mainFolder}`);
-    this.logger.info(`Type Component: ${this.config.typeComponent}`);
+    Object.keys(this.config).forEach((key) => {
+      const value = this.config[key as keyof Config];
+      this.logger.info(`${key}: ${value}`);
+    });
   };
 
   register = (program: Command) =>
