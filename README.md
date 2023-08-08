@@ -1,8 +1,6 @@
-# DejaVu - Your Web Library Development Companion
+# DejaVu CLI
 
-![DejaVu Logo](https://your-domain.com/dejavu-logo.png)
-
-Welcome to DejaVu - your ultimate CLI tool for web libraries like React! 🚀
+Welcome to DejaVu - your CLI tool for web libraries like React! 🚀
 
 ## Features
 
@@ -45,7 +43,6 @@ src/
   components/
     Button/
     Button.js
-    Button.css
     index.js
 ```
 
@@ -61,10 +58,4 @@ DejaVu is open-source software licensed under the [MIT License](https://opensour
 
 ## Get in Touch
 
-For any questions or support, reach out to our friendly team at support@dejavu.com or visit our website [dejavu.com](https://dejavu.com).
-
----
-
-[![Follow us on Twitter](https://your-domain.com/twitter-icon.png)](https://twitter.com/dejavu) [![Join our community on Discord](https://your-domain.com/discord-icon.png)](https://discord.gg/dejavu)
-
-Give your web library development a touch of DejaVu magic! 🎉
+For any questions or support, reach out to our friendly team at @coffejeancode
