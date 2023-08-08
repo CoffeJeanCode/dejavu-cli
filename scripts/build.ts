@@ -7,7 +7,7 @@ build({
   platform: "node",
   target: "node14",
   minify: true,
-  external: ["inquirer", "fs", "path"],
+  external: ["inquirer", "fs", "path", "commander", "chalk"],
 }).catch((err) => {
   console.error(err);
   process.exit(1);

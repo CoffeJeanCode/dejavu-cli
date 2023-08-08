@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A powerful CLI tool for web libraries like React, simplifying component creation and enabling seamless development.",
   "main": "dist/index.js",
+  "keywords": ["cli", "web", "React", "component", "development"],
   "bin": {
     "dejavu": "dist/index.js"
   },
