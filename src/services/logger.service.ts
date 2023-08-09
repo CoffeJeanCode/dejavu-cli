@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { createGradient } from "../utils/create-gradient.util";
 
 /**
  * A utility class for formatting and displaying colored log messages in the console.
@@ -72,5 +73,18 @@ export class Logger {
    */
   error = this.formatMessage((message: string) => {
     console.error(chalk.bgRed.bold.white(message));
+  });
+
+  /**
+   * Sets a custom title format for logging with gradient colors.
+   *
+   * This method formats and logs the provided message using gradient colors. The message is styled
+   * with a gradient color effect between the specified start and end colors.
+   *
+   * @function title
+   * @param {string} message - The message to be styled and logged.
+   */
+  title = this.formatMessage((message: string) => {
+    console.log(`${createGradient(message, "#4158D0", "#C850C0")}`);
   });
 }

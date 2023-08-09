@@ -31,6 +31,7 @@ export class CLI extends Command {
    * @throws {Error} If an error occurs during command execution or initialization.
    */
   init = async (args: string[]) => {
+    this.logger.title("DejaVu");
     for (const Command of commands) {
       const command = new Command();
       command
