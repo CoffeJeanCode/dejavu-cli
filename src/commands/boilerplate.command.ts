@@ -120,7 +120,10 @@ class BoilerplateCommand extends BaseCommand {
       .command("boilerplate")
       .aliases(["boil"])
       .description("Create clean architecture folder structure")
-      .option("--skip [folders...]");
+      .option(
+        "--skip [folders...]",
+        `Folder structure: ${this.foldersArchitecture.join("/ ")}`
+      );
 }
 
 export default BoilerplateCommand;
