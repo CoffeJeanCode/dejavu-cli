@@ -1,5 +1,6 @@
 import { join } from "path";
-import { Language, TypeComponent } from "../models/config.model";
+import { BaseTemplate } from "../models/base-template";
+import { Extension, Language, TypeComponent } from "../models/config.model";
 import { FileManager } from "../services/file-manager.service";
 import { Logger } from "../services/logger.service";
 import { formatComponentName } from "../utils/format-component-name.util";
@@ -14,13 +15,9 @@ import { match } from "../utils/pattern-match.util";
  *
  * @class
  */
-export class ComponentTemplate {
-  private fileManager: FileManager;
-  private logger: Logger;
-
+export class ComponentTemplate extends BaseTemplate {
   constructor() {
-    this.fileManager = new FileManager();
-    this.logger = new Logger();
+    super();
   }
 
   /**
@@ -42,17 +39,17 @@ export class ComponentTemplate {
    * Creates a file for a component with the specified content.
    *
    * @async
-   * @function createFile
+   * @function createFileComponent
    * @param {string} componentPath - The path where the component file should be created.
    * @param {string} componentName - The name of the component.
    * @throws {Error} If an error occurs during file creation.
    */
-  private createFile = async (componentPath: string, componentName: string) => {
+  private createFileComponent = async (
+    componentPath: string,
+    componentName: string
+  ) => {
     const componentContent = this.getTemplate(componentName);
-    await this.fileManager.createFileIfNotExists(
-      componentPath,
-      componentContent
-    );
+    await this.createFile(componentPath, componentContent);
   };
 
   /**
@@ -93,15 +90,21 @@ export class ComponentTemplate {
    * @param {string} mainFolder - The main folder of the application.
    * @throws {Error} If an error occurs during component creation or file handling.
    */
-  async createComponent(
-    name: string,
-    typeComponent: TypeComponent,
-    language: Language,
-    mainFolder: string
-  ): Promise<void> {
+  async createComponent({
+    name,
+    typeComponent,
+    language,
+    extension,
+    mainFolder,
+  }: {
+    name: string;
+    typeComponent: TypeComponent;
+    language: Language;
+    extension: Extension;
+    mainFolder: string;
+  }): Promise<void> {
     const formattedName = formatComponentName(name);
     const componentFolder = join(mainFolder, "components");
-    const extension = language === Language.typescript ? "tsx" : "js";
     const componentName = `${formattedName}.${extension}`;
     const componentPath =
       typeComponent == TypeComponent.barrel
@@ -122,7 +125,7 @@ export class ComponentTemplate {
           [TypeComponent.file],
           async () => {
             const componentPath = join(componentFolder, componentName);
-            await this.createFile(componentPath, formattedName);
+            await this.createFileComponent(componentPath, formattedName);
           },
         ],
         [
@@ -133,12 +136,10 @@ export class ComponentTemplate {
             const barrelPath = join(componentFolder, formattedName, barrelName);
 
             await this.createBarrel(barrelFolder, barrelPath, formattedName);
-            await this.createFile(componentPath, formattedName);
+            await this.createFileComponent(componentPath, formattedName);
           },
         ]
       )();
-
-      this.logger.success(`Component ${formattedName} created`);
     } catch (error) {
       this.logger.error("Error creating components:", String(error));
     }
