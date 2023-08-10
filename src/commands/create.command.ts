@@ -143,6 +143,8 @@ class CreateCommand extends BaseCommand {
       [pages, this.createPages]
     )(...names);
 
+    await this.fileManager.createDirectoryIfNotExists(this.config.mainFolder);
+
     if (result === null) this.logger.error("Invalid type");
   };
 
