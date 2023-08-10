@@ -12,14 +12,9 @@ export abstract class BaseCommand {
     this.fileManager = new FileManager();
     this.logger = new Logger();
     this.config =
-      this.fileManager.getConfig() ||
-      ({
-        language: Language.javascript,
-        mainFolder: "src",
-        typeComponent: TypeComponent.barrel,
-      } as Config);
+      this.fileManager.getConfig() ;
   }
 
   abstract execute(...args: any[]): Promise<void>;
-  abstract register(program: Command): void;
+  abstract register(program: Command): Command;
 }

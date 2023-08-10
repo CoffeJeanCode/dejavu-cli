@@ -1,5 +1,11 @@
 import fs from "fs";
-import { Config } from "../models/config.model";
+import {
+  Config,
+  ConfigFile,
+  Extension,
+  Language,
+  TypeComponent,
+} from "../models/config.model";
 
 /**
  * A utility class for managing file operations.
@@ -20,14 +26,28 @@ export class FileManager {
    * parses it as JSON, and returns the parsed configuration.
    *
    * @function getConfig
-   * @returns {Config | null} The parsed configuration object, or null if an error occurs.
+   * @returns {Config} The parsed configuration object, or default config if an error occurs.
    */
-  getConfig = (): Config | null => {
+  getConfig = (): Config => {
     try {
       const data = fs.readFileSync(this.configPath, "utf8");
-      return JSON.parse(data) as Config;
+      const configFile = JSON.parse(data) as ConfigFile;
+      const config: Config = {
+        ...configFile,
+        extension:
+          configFile.language === Language.javascript
+            ? Extension.js
+            : Extension.tsx,
+      };
+
+      return config;
     } catch (error) {
-      return null;
+      return {
+        language: Language.javascript,
+        mainFolder: "src",
+        typeComponent: TypeComponent.barrel,
+        extension: Extension.js,
+      } as Config;
     }
   };
 
@@ -40,7 +60,7 @@ export class FileManager {
    * @function saveConfig
    * @param {Config} config - The configuration object to be saved.
    */
-  saveConfig = (config: Config): void => {
+  saveConfig = (config: ConfigFile): void => {
     fs.writeFileSync(this.configPath, JSON.stringify(config, null, 2), "utf8");
   };
 

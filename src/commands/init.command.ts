@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import inquirer, { QuestionCollection } from "inquirer";
 import { BaseCommand } from "../models/base-command";
-import { Config } from "../models/config.model";
+import { Config, ConfigFile } from "../models/config.model";
 
 /**
  * Represents a command to initialize the application's configuration.
@@ -78,7 +78,7 @@ class InitCommand extends BaseCommand {
     ];
 
     const answers = await inquirer.prompt(questions);
-    const config: Config = {
+    const config: ConfigFile = {
       language: answers.language,
       mainFolder: answers.mainFolder,
       typeComponent: answers.typeComponent,
