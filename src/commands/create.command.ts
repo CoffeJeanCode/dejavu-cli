@@ -43,18 +43,19 @@ class CreateCommand extends BaseCommand {
    * @throws {Error} If an error occurs during component creation or file handling.
    */
   createComponent = async (names: string[]) => {
-    const { mainFolder, typeComponent, language } = this.config;
+    const { mainFolder, typeComponent, language, extension } = this.config;
     const componentFolder = `${mainFolder}/components`;
 
     try {
       this.fileManager.createDirectoryIfNotExists(componentFolder);
       for (const name of names) {
-        await this.componentTemplate.createComponent(
+        await this.componentTemplate.createComponent({
           name,
           typeComponent,
+          extension,
           language,
-          mainFolder
-        );
+          mainFolder,
+        });
       }
     } catch (error) {
       this.logger.error("Error creating components:", String(error));
@@ -97,13 +98,18 @@ class CreateCommand extends BaseCommand {
    * @throws {Error} If an error occurs during page creation or file handling.
    */
   createPages = async (names: string[]) => {
-    const { mainFolder, typeComponent, language } = this.config;
+    const { mainFolder, extension, language } = this.config;
     const pageFolder = join(mainFolder, "pages");
 
     try {
       this.fileManager.createDirectoryIfNotExists(pageFolder);
       for (const name of names) {
-        await this.pageTemplate.createPage(name, language, mainFolder);
+        await this.pageTemplate.createPage({
+          name,
+          language,
+          extension,
+          mainFolder,
+        });
       }
     } catch (error) {
       this.logger.error("Error creating pages:", String(error));
