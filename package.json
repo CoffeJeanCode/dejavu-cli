@@ -1,6 +1,6 @@
 {
-  "name": "dejavu",
-  "version": "0.0.2",
+  "name": "dejavu-cli",
+  "version": "0.0.1-beta",
   "description": "A powerful CLI tool for web libraries like React, simplifying component creation and enabling seamless development.",
   "main": "index.js",
   "bin": {
