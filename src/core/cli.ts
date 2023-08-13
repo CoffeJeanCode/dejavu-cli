@@ -47,6 +47,7 @@ export class CLI extends Command {
     return this.name(name)
       .version(version)
       .description(description)
+      .alias("vu")
       .on("command:*", () => {
         this.logger.error(`Invalid command: ${this.args.join(" ")}`);
         this.help();
