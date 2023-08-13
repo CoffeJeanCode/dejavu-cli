@@ -4,12 +4,21 @@ export enum TypeComponent {
 }
 
 export enum Language {
-  javascript = "js",
-  typescript = "ts",
+  javascript = "javascript",
+  typescript = "typescript",
 }
 
-export interface Config {
+export enum Extension {
+  js = "js",
+  tsx = "tsx",
+}
+
+export interface ConfigFile {
   language: Language;
   mainFolder: string;
   typeComponent: TypeComponent;
+}
+
+export interface Config extends ConfigFile {
+  extension: Extension;
 }

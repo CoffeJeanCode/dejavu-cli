@@ -1,21 +1,32 @@
-// src/services/component-template.service.ts
-
 import { join } from "path";
-import { Language, TypeComponent } from "../models/config.model";
+import { BaseTemplate } from "../models/base-template";
+import { Extension, Language, TypeComponent } from "../models/config.model";
 import { FileManager } from "../services/file-manager.service";
 import { Logger } from "../services/logger.service";
 import { formatComponentName } from "../utils/format-component-name.util";
 import { match } from "../utils/pattern-match.util";
 
-export class ComponentTemplate {
-  private fileManager: FileManager;
-  private logger: Logger;
-
+/**
+ * Utility class for generating and creating component templates.
+ *
+ * This class provides methods to generate component templates and create the corresponding
+ * files and folder structures for components in an application. It supports multiple programming languages
+ * and component types.
+ *
+ * @class
+ */
+export class ComponentTemplate extends BaseTemplate {
   constructor() {
-    this.fileManager = new FileManager();
-    this.logger = new Logger();
+    super();
   }
 
+  /**
+   * Retrieves the template content for a component.
+   *
+   * @function getTemplate
+   * @param {string} componentName - The name of the component.
+   * @returns {string} The template content for the component.
+   */
   private getTemplate = (componentName: string) => `
   const ${componentName} = () => {
     return <div></div>
@@ -24,14 +35,33 @@ export class ComponentTemplate {
   export default ${componentName}
   `;
 
-  private createFile = async (componentPath: string, componentName: string) => {
+  /**
+   * Creates a file for a component with the specified content.
+   *
+   * @async
+   * @function createFileComponent
+   * @param {string} componentPath - The path where the component file should be created.
+   * @param {string} componentName - The name of the component.
+   * @throws {Error} If an error occurs during file creation.
+   */
+  private createFileComponent = async (
+    componentPath: string,
+    componentName: string
+  ) => {
     const componentContent = this.getTemplate(componentName);
-    await this.fileManager.createFileIfNotExists(
-      componentPath,
-      componentContent
-    );
+    await this.createFile(componentPath, componentContent);
   };
 
+  /**
+   * Creates a barrel file for a component.
+   *
+   * @async
+   * @function createBarrel
+   * @param {string} barrelFolder - The path where the barrel folder should be created.
+   * @param {string} barrelPath - The path where the barrel file should be created.
+   * @param {string} componentName - The name of the component.
+   * @throws {Error} If an error occurs during file or folder creation.
+   */
   private async createBarrel(
     barrelFolder: string,
     barrelPath: string,
@@ -49,26 +79,43 @@ export class ComponentTemplate {
       );
   }
 
-  async createComponent(
-    name: string,
-    typeComponent: TypeComponent,
-    language: Language,
-    mainFolder: string
-  ): Promise<void> {
-    const formatedName = formatComponentName(name);
+  /**
+   * Creates a component with the specified name, type, language, and main folder.
+   *
+   * @async
+   * @function createComponent
+   * @param {string} name - The name of the component.
+   * @param {TypeComponent} typeComponent - The type of the component (file or barrel).
+   * @param {Language} language - The programming language to use (typescript or javascript).
+   * @param {string} mainFolder - The main folder of the application.
+   * @throws {Error} If an error occurs during component creation or file handling.
+   */
+  async createComponent({
+    name,
+    typeComponent,
+    language,
+    extension,
+    mainFolder,
+  }: {
+    name: string;
+    typeComponent: TypeComponent;
+    language: Language;
+    extension: Extension;
+    mainFolder: string;
+  }): Promise<void> {
+    const formattedName = formatComponentName(name);
     const componentFolder = join(mainFolder, "components");
-    const extension = language === Language.typescript ? "tsx" : "js";
-    const componentName = `${formatedName}.${extension}`;
+    const componentName = `${formattedName}.${extension}`;
     const componentPath =
       typeComponent == TypeComponent.barrel
-        ? join(componentFolder, formatedName, componentName)
+        ? join(componentFolder, formattedName, componentName)
         : join(componentFolder, componentName);
 
     try {
       await this.fileManager.createDirectoryIfNotExists(componentFolder);
 
       if (await this.fileManager.exists(componentPath)) {
-        this.logger.info(`Component ${formatedName} already exists`);
+        this.logger.info(`Component ${formattedName} already exists`);
         return;
       }
 
@@ -78,23 +125,21 @@ export class ComponentTemplate {
           [TypeComponent.file],
           async () => {
             const componentPath = join(componentFolder, componentName);
-            await this.createFile(componentPath, formatedName);
+            await this.createFileComponent(componentPath, formattedName);
           },
         ],
         [
           [TypeComponent.barrel],
           async () => {
             const barrelName = `index.${extension}`;
-            const barrelFolder = join(componentFolder, formatedName);
-            const barrelPath = join(componentFolder, formatedName, barrelName);
+            const barrelFolder = join(componentFolder, formattedName);
+            const barrelPath = join(componentFolder, formattedName, barrelName);
 
-            await this.createBarrel(barrelFolder, barrelPath, formatedName);
-            await this.createFile(componentPath, formatedName);
+            await this.createBarrel(barrelFolder, barrelPath, formattedName);
+            await this.createFileComponent(componentPath, formattedName);
           },
         ]
       )();
-
-      this.logger.success(`Component ${formatedName} created`);
     } catch (error) {
       this.logger.error("Error creating components:", String(error));
     }

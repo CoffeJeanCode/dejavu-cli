@@ -1,6 +1,9 @@
 import { Argument, Command } from "commander";
+import { join } from "path";
 import { BaseCommand } from "../models/base-command";
 import { ComponentTemplate } from "../templates/component.template";
+import { PageTemplate } from "../templates/page.template";
+import { ServiceTemplate } from "../templates/service.template";
 import { match } from "../utils/pattern-match.util";
 
 /**
@@ -14,15 +17,21 @@ import { match } from "../utils/pattern-match.util";
  */
 class CreateCommand extends BaseCommand {
   private componentTemplate: ComponentTemplate;
+  private pageTemplate: PageTemplate;
+  private serviceTemplate: ServiceTemplate;
+
   private types = {
     components: ["component", "comp", "c"],
     hooks: ["hook", "hk"],
-    services: ["service", "svc"],
+    services: ["service", "sv", "s"],
+    pages: ["page", "pg", "p"],
   };
 
   constructor() {
     super();
     this.componentTemplate = new ComponentTemplate();
+    this.pageTemplate = new PageTemplate();
+    this.serviceTemplate = new ServiceTemplate();
   }
 
   getAllTypes = () => Object.values(this.types);
@@ -38,18 +47,19 @@ class CreateCommand extends BaseCommand {
    * @throws {Error} If an error occurs during component creation or file handling.
    */
   createComponent = async (names: string[]) => {
-    const { mainFolder, typeComponent, language } = this.config;
+    const { mainFolder, typeComponent, language, extension } = this.config;
     const componentFolder = `${mainFolder}/components`;
 
     try {
       this.fileManager.createDirectoryIfNotExists(componentFolder);
       for (const name of names) {
-        await this.componentTemplate.createComponent(
+        await this.componentTemplate.createComponent({
           name,
           typeComponent,
+          extension,
           language,
-          mainFolder
-        );
+          mainFolder,
+        });
       }
     } catch (error) {
       this.logger.error("Error creating components:", String(error));
@@ -75,9 +85,53 @@ class CreateCommand extends BaseCommand {
    * @param {string[]} names - The names of the services to create.
    * @todo Implement the logic to create services.
    */
-  createService = (names: string[]) => {
-    // Implement the logic to create a service
-    // Use this.fileManager and this.logger for file handling and logging
+  createService = async (names: string[]) => {
+    const { mainFolder, extension, language } = this.config;
+    const serviceFolder = join(mainFolder, "services");
+
+    try {
+      this.fileManager.createDirectoryIfNotExists(serviceFolder);
+      for (const name of names) {
+        await this.serviceTemplate.createService({
+          name,
+          language,
+          extension,
+          mainFolder,
+        });
+      }
+    } catch (error) {
+      this.logger.error("Error creating services:", String(error));
+    }
+  };
+
+  /**
+   * Creates pages with the specified names and configuration settings.
+   *
+   * This method creates pages based on the provided names, programming language, main folder, and component type.
+   * Pages are generated and placed within the "pages" folder of the application structure.
+   *
+   * @async
+   * @function createPages
+   * @param {string[]} names - An array of names for the pages to be created.
+   * @throws {Error} If an error occurs during page creation or file handling.
+   */
+  createPages = async (names: string[]) => {
+    const { mainFolder, extension, language } = this.config;
+    const pageFolder = join(mainFolder, "pages");
+
+    try {
+      this.fileManager.createDirectoryIfNotExists(pageFolder);
+      for (const name of names) {
+        await this.pageTemplate.createPage({
+          name,
+          language,
+          extension,
+          mainFolder,
+        });
+      }
+    } catch (error) {
+      this.logger.error("Error creating pages:", String(error));
+    }
   };
 
   /**
@@ -97,14 +151,17 @@ class CreateCommand extends BaseCommand {
       process.exit(0);
     }
 
-    const { components, hooks, services } = this.types;
+    const { components, hooks, services, pages } = this.types;
 
     const result = match<string, void>(
       type,
       [components, this.createComponent],
       [hooks, this.createHook],
-      [services, this.createService]
+      [services, this.createService],
+      [pages, this.createPages]
     )(...names);
+
+    await this.fileManager.createDirectoryIfNotExists(this.config.mainFolder);
 
     if (result === null) this.logger.error("Invalid type");
   };
@@ -120,7 +177,9 @@ class CreateCommand extends BaseCommand {
       .command("create ")
       .argument(
         "[type]",
-        `Type of file to create, could be: ${this.getAllTypes().map(types => types.join(" ")).join(" | ")}`
+        `Type of file to create, could be: ${this.getAllTypes()
+          .map((types) => types.join(" "))
+          .join(" | ")}`
       )
       .argument("[names...]")
       .aliases(["c"])
