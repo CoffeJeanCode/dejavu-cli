@@ -3,6 +3,7 @@ import { join } from "path";
 import { BaseCommand } from "../models/base-command";
 import { ComponentTemplate } from "../templates/component.template";
 import { PageTemplate } from "../templates/page.template";
+import { ServiceTemplate } from "../templates/service.template";
 import { match } from "../utils/pattern-match.util";
 
 /**
@@ -17,10 +18,12 @@ import { match } from "../utils/pattern-match.util";
 class CreateCommand extends BaseCommand {
   private componentTemplate: ComponentTemplate;
   private pageTemplate: PageTemplate;
+  private serviceTemplate: ServiceTemplate;
+
   private types = {
     components: ["component", "comp", "c"],
     hooks: ["hook", "hk"],
-    services: ["service", "svc"],
+    services: ["service", "sv", "s"],
     pages: ["page", "pg", "p"],
   };
 
@@ -28,6 +31,7 @@ class CreateCommand extends BaseCommand {
     super();
     this.componentTemplate = new ComponentTemplate();
     this.pageTemplate = new PageTemplate();
+    this.serviceTemplate = new ServiceTemplate();
   }
 
   getAllTypes = () => Object.values(this.types);
@@ -81,9 +85,23 @@ class CreateCommand extends BaseCommand {
    * @param {string[]} names - The names of the services to create.
    * @todo Implement the logic to create services.
    */
-  createService = (names: string[]) => {
-    // Implement the logic to create a service
-    // Use this.fileManager and this.logger for file handling and logging
+  createService = async (names: string[]) => {
+    const { mainFolder, extension, language } = this.config;
+    const serviceFolder = join(mainFolder, "services");
+
+    try {
+      this.fileManager.createDirectoryIfNotExists(serviceFolder);
+      for (const name of names) {
+        await this.serviceTemplate.createService({
+          name,
+          language,
+          extension,
+          mainFolder,
+        });
+      }
+    } catch (error) {
+      this.logger.error("Error creating services:", String(error));
+    }
   };
 
   /**
