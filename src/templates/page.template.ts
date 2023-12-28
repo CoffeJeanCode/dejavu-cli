@@ -1,5 +1,5 @@
 import { join } from "path";
-import { BaseTemplate } from "../models/base-template";
+import { BaseTemplate } from "../models/base-template.model";
 import { Extension, Language } from "../models/config.model";
 import { formatComponentName } from "../utils/format-component-name.util";
 

@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { join } from "path";
-import { BaseCommand } from "../models/base-command";
+import { BaseCommand } from "../models/base-command.model";
 
 /**
  * Represents a command to create a clean architecture folder structure.

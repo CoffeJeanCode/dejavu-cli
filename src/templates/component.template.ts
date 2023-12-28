@@ -1,5 +1,5 @@
 import { join } from "path";
-import { BaseTemplate } from "../models/base-template";
+import { BaseTemplate } from "../models/base-template.model";
 import { Extension, Language, TypeComponent } from "../models/config.model";
 import { FileManager } from "../services/file-manager.service";
 import { Logger } from "../services/logger.service";

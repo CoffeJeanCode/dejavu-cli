@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import inquirer, { QuestionCollection } from "inquirer";
-import { BaseCommand } from "../models/base-command";
+import { BaseCommand } from "../models/base-command.model";
 import { Config, ConfigFile } from "../models/config.model";
 
 /**

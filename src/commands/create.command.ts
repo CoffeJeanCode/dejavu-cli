@@ -1,6 +1,6 @@
 import { Argument, Command } from "commander";
 import { join } from "path";
-import { BaseCommand } from "../models/base-command";
+import { BaseCommand } from "../models/base-command.model";
 import { ComponentTemplate } from "../templates/component.template";
 import { PageTemplate } from "../templates/page.template";
 import { ServiceTemplate } from "../templates/service.template";

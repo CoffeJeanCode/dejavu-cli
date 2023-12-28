@@ -40,7 +40,7 @@ export class CLI extends Command {
           async (...args: any[]) =>
             await command
               .execute(args)
-              .catch((err: Error) => console.error(err))
+              .catch((err: Error) => this.logger.error(err.message))
         );
     }
 
