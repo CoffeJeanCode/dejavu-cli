@@ -27,6 +27,7 @@ Thumbs.db
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+bun.lock
 
 # Ignore CLI-generated files (change 'cli-name' to the name of your CLI)
 cli-name-debug.log
@@ -34,3 +35,6 @@ cli-name-error.log
 
 # Add other project-specific files to ignore if needed
 /dejavu.json
+
+# Test
+coverage
