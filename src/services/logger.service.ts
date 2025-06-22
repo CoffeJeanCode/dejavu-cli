@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { createGradient } from "../utils/create-gradient.util";
+import { createGradient } from "@/utils/create-gradient.util";
 
 /**
  * A utility class for formatting and displaying colored log messages in the console.
@@ -22,8 +22,8 @@ export class Logger {
    */
   formatMessage =
     (logger: (...message: string[]) => void) =>
-    (...message: string[]) =>
-      logger(` ${message.join(" ")} `);
+      (...message: string[]) =>
+        logger(` ${message.join(" ")} `);
 
   /**
    * Logs a generic message to the console with a gray background and white text.

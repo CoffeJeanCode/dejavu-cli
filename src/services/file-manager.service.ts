@@ -1,11 +1,5 @@
 import fs from "fs";
-import {
-  Config,
-  ConfigFile,
-  Extension,
-  Language,
-  TypeComponent,
-} from "../models/config.model";
+import path from "path";
 
 /**
  * A utility class for managing file operations.
@@ -17,155 +11,82 @@ import {
  * @class
  */
 export class FileManager {
-  private configPath = "./dejavu.json";
-
-  /**
-   * Retrieves the configuration from a JSON file.
-   *
-   * This method reads the contents of the configuration file at the specified path,
-   * parses it as JSON, and returns the parsed configuration.
-   *
-   * @function getConfig
-   * @returns {Config} The parsed configuration object, or default config if an error occurs.
-   */
-  getConfig = (): Config => {
-    try {
-      const data = fs.readFileSync(this.configPath, "utf8");
-      const configFile = JSON.parse(data) as ConfigFile;
-      const config: Config = {
-        ...configFile,
-        extension:
-          configFile.language === Language.javascript
-            ? Extension.js
-            : Extension.tsx,
-      };
-
-      return config;
-    } catch (error) {
-      return {
-        language: Language.javascript,
-        mainFolder: "src",
-        typeComponent: TypeComponent.barrel,
-        extension: Extension.js,
-      } as Config;
-    }
-  };
-
-  /**
-   * Saves a configuration object to a JSON file.
-   *
-   * This method serializes the provided configuration object as JSON and writes it to
-   * the configuration file at the specified path.
-   *
-   * @function saveConfig
-   * @param {Config} config - The configuration object to be saved.
-   */
-  saveConfig = (config: ConfigFile): void => {
-    fs.writeFileSync(this.configPath, JSON.stringify(config, null, 2), "utf8");
-  };
-
   /**
    * Checks if a file or directory exists at the specified path.
    *
-   * @async
-   * @function exists
-   * @param {string} path - The path to the file or directory to check.
-   * @returns {Promise<boolean>} A promise that resolves to true if the file or directory exists, otherwise false.
+   * @param {string} targetPath - The path to the file or directory.
+   * @returns {Promise<boolean>} A promise that resolves to `true` if the file or directory exists, `false` otherwise.
    */
-  exists = (path: string): Promise<boolean> =>
-    new Promise((resolve) => {
-      fs.access(path, fs.constants.F_OK, (error) => {
-        resolve(!error);
-      });
-    });
+  exists = async (targetPath: string): Promise<boolean> => {
+    return fs.promises
+      .access(targetPath, fs.constants.F_OK)
+      .then(() => true)
+      .catch(() => false);
+  }
 
   /**
-   * Reads the contents of a file.
+   * Reads the content of a file.
    *
-   * @async
-   * @function readFile
-   * @param {string} path - The path to the file to read.
-   * @returns {Promise<string>} A promise that resolves to the content of the file as a string.
+   * @param {string} filePath - The path to the file to read.
+   * @returns {Promise<string>} A promise that resolves with the content of the file as a UTF-8 string.
    */
-  readFile = (path: string): Promise<string> =>
-    new Promise((resolve, reject) => {
-      fs.readFile(path, "utf8", (error, data) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(data);
-        }
-      });
-    });
+  readFile = async (filePath: string): Promise<string> => {
+    return fs.promises.readFile(filePath, 'utf8');
+  }
 
   /**
-   * Writes content to a file.
+   * Writes content to a file. If the file does not exist, it will be created.
+   * If it exists, its content will be overwritten.
    *
-   * @async
-   * @function writeFile
-   * @param {string} path - The path to the file to write.
+   * @param {string} filePath - The path to the file to write.
    * @param {string} content - The content to write to the file.
-   * @returns {Promise<void>} A promise that resolves once the content is successfully written.
+   * @returns {Promise<void>} A promise that resolves when the file has been written.
    */
-  writeFile = (path: string, content: string): Promise<void> =>
-    new Promise((resolve, reject) => {
-      fs.writeFile(path, content, "utf8", (error) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
+  writeFile = async (filePath: string, content: string): Promise<void> => {
+    await fs.promises.writeFile(filePath, content, 'utf8');
+  }
 
   /**
-   * Creates a directory if it does not already exist.
+   * Creates a directory at the specified path. If the directory already exists,
+   * no action is taken. Parent directories will be created if they don't exist.
    *
-   * @async
-   * @function createDirectoryIfNotExists
-   * @param {string} path - The path to the directory to create.
-   * @returns {Promise<void>} A promise that resolves once the directory is created or if it already exists.
+   * @param {string} dirPath - The path of the directory to create.
+   * @returns {Promise<void>} A promise that resolves when the directory has been created.
    */
-  createDirectoryIfNotExists = (path: string): Promise<void> =>
-    new Promise((resolve, reject) => {
-      this.exists(path).then((exists) => {
-        if (!exists) {
-          fs.mkdir(path, { recursive: true }, (error) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve();
-            }
-          });
-        } else {
-          resolve();
-        }
-      });
-    });
+  createDirectory = async (dirPath: string): Promise<void> => {
+    const exists = await this.exists(dirPath);
+    if (!exists) {
+      await fs.promises.mkdir(dirPath, { recursive: true });
+    }
+  }
 
   /**
-   * Creates a file if it does not already exist and writes content to it.
+   * Creates an empty file at the specified path if it doesn't already exist.
+   * If the file exists, its content is not modified.
    *
-   * @async
-   * @function createFileIfNotExists
-   * @param {string} path - The path to the file to create.
-   * @param {string} content - The content to write to the file.
-   * @returns {Promise<void>} A promise that resolves once the file is created with the specified content.
+   * @param {string} filePath - The path to the file to create.
+   * @param {string} [content=''] - Optional content to write to the file if it's created. Defaults to an empty string.
+   * @returns {Promise<void>} A promise that resolves when the file has been created or confirmed to exist.
    */
-  createFileIfNotExists = (path: string, content: string): Promise<void> =>
-    new Promise((resolve, reject) => {
-      this.exists(path).then((exists) => {
-        if (!exists) {
-          fs.writeFile(path, content, "utf8", (error) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve();
-            }
-          });
-        } else {
-          resolve();
-        }
-      });
-    });
+  createFile = async (filePath: string, content = ''): Promise<void> => {
+    const exists = await this.exists(filePath);
+    if (!exists) {
+      await this.writeFile(filePath, content);
+    }
+  }
+
+  /**
+   * Ensures that a directory exists and then creates a file within it if the file doesn't already exist.
+   * Parent directories will be created if they don't exist.
+   *
+   * @param {string} dirPath - The path to the directory.
+   * @param {string} fileName - The name of the file to create within the directory.
+   * @param {string} [content=''] - Optional content to write to the file if it's created. Defaults to an empty string.
+   * @returns {Promise<void>} A promise that resolves when the directory and file have been ensured.
+   */
+  prepareFileInDirectory = async (dirPath: string, fileName: string, content = ''): Promise<void> => {
+    await this.createDirectory(dirPath);
+    const fullPath = path.join(dirPath, fileName);
+    await this.createFile(fullPath, content);
+  }
 }

@@ -1,10 +1,8 @@
-import { join } from "path";
-import { BaseTemplate } from "../models/base-template.model";
-import { Extension, Language, TypeComponent } from "../models/config.model";
-import { FileManager } from "../services/file-manager.service";
-import { Logger } from "../services/logger.service";
-import { formatComponentName } from "../utils/format-component-name.util";
-import { match } from "../utils/pattern-match.util";
+import { join } from "node:path";
+import { BaseTemplate } from "@/templates/base-template";
+import { Extension, Language, TypeComponent } from "@/models/config.model";
+import { formatComponentName } from "@/utils/format-component-name.util";
+import { match } from "@/utils/pattern-match.util";
 
 /**
  * Utility class for generating and creating component templates.
@@ -69,10 +67,10 @@ export class ComponentTemplate extends BaseTemplate {
   ): Promise<void> {
     const barrelContent = `export { default } from './${componentName}';`;
     this.fileManager
-      .createDirectoryIfNotExists(barrelFolder)
+      .createDirectory(barrelFolder)
       .then(
         async () =>
-          await this.fileManager.createFileIfNotExists(
+          await this.fileManager.createFile(
             barrelPath,
             barrelContent
           )
@@ -112,7 +110,7 @@ export class ComponentTemplate extends BaseTemplate {
         : join(componentFolder, componentName);
 
     try {
-      await this.fileManager.createDirectoryIfNotExists(componentFolder);
+      await this.fileManager.createDirectory(componentFolder);
 
       if (await this.fileManager.exists(componentPath)) {
         this.logger.info(`Component ${formattedName} already exists`);

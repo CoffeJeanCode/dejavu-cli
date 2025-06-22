@@ -4,21 +4,24 @@ export enum TypeComponent {
 }
 
 export enum Language {
-  javascript = "javascript",
-  typescript = "typescript",
+  JavaScript = 'javascript',
+  TypeScript = 'typescript',
 }
 
-export enum Extension {
-  js = "js",
-  tsx = "tsx",
-}
+export const ExtensionMap = {
+  [Language.JavaScript]: 'js',
+  [Language.TypeScript]: 'tsx',
+} as const;
 
-export interface ConfigFile {
-  language: Language;
+export type ExtensionMap = typeof ExtensionMap;
+export type Extension = ExtensionMap[Language];
+
+export type ConfigFile<L extends Language = Language> = {
+  language: L;
   mainFolder: string;
   typeComponent: TypeComponent;
-}
+};
 
-export interface Config extends ConfigFile {
-  extension: Extension;
-}
+export type Config<L extends Language = Language> = ConfigFile<L> & {
+  extension: ExtensionMap[L];
+};

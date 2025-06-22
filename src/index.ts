@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { CLI } from "./core/cli";
+
+import { CLI } from "@/core/cli";
 
 /**
  * Entry point of the application.

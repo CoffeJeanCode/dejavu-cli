@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { description, name, version } from "../../package.json";
-import { commands } from "../commands";
-import { Logger } from "../services/logger.service";
+import { Logger } from "@/services/logger.service";
+import { loadCommands } from "@/commands/all";
 
 /**
  * Extends the Commander Command class to create a command-line interface for the application.
@@ -32,6 +32,9 @@ export class CLI extends Command {
    */
   init = async (args: string[]) => {
     this.logger.title("DejaVu");
+
+    const commands = await loadCommands()
+
     for (const Command of commands) {
       const command = new Command();
       command
