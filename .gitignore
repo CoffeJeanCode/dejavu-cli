@@ -38,3 +38,8 @@ cli-name-error.log
 
 # Test
 coverage
+
+./index.js
+
+# temp
+/temp/
