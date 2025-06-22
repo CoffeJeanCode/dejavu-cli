@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { join } from "path";
-import { BaseCommand } from "../models/base-command.model";
+import { BaseCommand } from "../../models/base-command.model";
 
 /**
  * Represents a command to create a clean architecture folder structure.
@@ -48,7 +48,7 @@ class BoilerplateCommand extends BaseCommand {
    * @throws {Error} If an error occurs during folder creation.
    */
   private createFolder = async (folderPath: string) => {
-    await this.fileManager.createDirectoryIfNotExists(folderPath);
+    await this.fileManager.createDirectory(folderPath);
     this.logger.success(`Created folder: ${folderPath}`);
   };
 

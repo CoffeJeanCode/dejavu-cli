@@ -1,7 +1,6 @@
 import { Command } from "commander";
-import { BaseCommand } from "../models/base-command.model";
-import { Config } from "../models/config.model";
-
+import { BaseCommand } from "models/base-command.model";
+import { Config } from "models/config.model"
 /**
  * Represents a command to view the current CLI configuration.
  *
