@@ -12,4 +12,6 @@ WORKDIR /app
 
 COPY . /app
 
+RUN bun i
+
 CMD ["tail", "-f", "/dev/null"]
